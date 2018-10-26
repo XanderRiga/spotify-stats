@@ -5,7 +5,7 @@ import spotipy
 import spotipy.util as util
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm
 from django.shortcuts import render, redirect
 
@@ -17,7 +17,10 @@ SCOPE = 'user-library-read'
 CACHE = '.spotipyoauthcache'
 
 
-def index(request):
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect('statify:profile')
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -32,10 +35,33 @@ def index(request):
             return redirect('statify:profile')
     else:
         form = SignUpForm()
-    return render(request, 'statify/index.html', {'form': form})
+    return render(request, 'statify/signup.html', {'form': form})
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('statify:signup')
+
+
+def login_user(request):
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('statify:profile')
+        else:
+            return render(request, 'statify/loginform.html')
+    except:
+        return render(request, 'statify/loginform.html')
+
+
 
 
 def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('statify:signup')
     user = request.user
     return render(request, 'statify/detail.html', {'user': user})
 
