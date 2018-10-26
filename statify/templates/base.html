@@ -7,7 +7,16 @@
 <head>
     <div class="container">
     {% block head %}{% endblock head %}
-    </div></head>
+    {% block navbar %}
+        <nav class="nav-wrapper">
+            <a href="#" class="brand-logo right">Logo</a>
+              <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="{% url 'statify:profile' %}">Profile</a></li>
+              </ul>
+        </nav>
+    {% endblock navbar %}
+    </div>
+</head>
 <body>
     <div class="container">
     {% block body %}{% endblock body %}

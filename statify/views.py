@@ -1,10 +1,7 @@
 from django.http import Http404, HttpResponse
-from django.shortcuts import render, redirect
-
 import spotipy
 import spotipy.util as util
 from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm
 from django.shortcuts import render, redirect
@@ -55,8 +52,6 @@ def login_user(request):
             return render(request, 'statify/loginform.html')
     except:
         return render(request, 'statify/loginform.html')
-
-
 
 
 def profile(request):
