@@ -1,7 +1,6 @@
 from django.http import Http404, HttpResponse
 import spotipy
 import spotipy.util as util
-from django.core.validators import URLValidator
 from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm
 from django.shortcuts import render, redirect
@@ -41,6 +40,9 @@ def logout_user(request):
 
 
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('statify:profile')
+
     try:
         username = request.POST['username']
         password = request.POST['password']
@@ -58,35 +60,53 @@ def profile(request):
     if not request.user.is_authenticated:
         return redirect('statify:signup')
     user = request.user
-    return render(request, 'statify/detail.html', {'user': user})
+    return render(request, 'statify/profile.html', {'user': user})
 
 
 def spotifyauth(request):
-    val = URLValidator()
-
-    username = 'xanderdagr8'
-    # auth_url = util.prompt_for_user_token(username, scope=SCOPE, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
-
-    auth_token = util.get_cached_token(username, scope=SCOPE, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
+    """This function checks for a cached token, and if there isn't one, then it asks the user to sign in"""
+    username = request.user.spotifyuser.spotify_username
+    auth_token = util.get_cached_token(username, scope=SCOPE, client_id=SPOTIPY_CLIENT_ID,
+                                       client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
 
     if auth_token:
-        return redirect('callback')
-    # try:
-    #     val(auth_url)
-    #     return HttpResponseRedirect(auth_url)
-    # except ValidationError:
-    #     auth_token = auth_url
-    #
-    #     sp = spotipy.Spotify(auth=auth_token)
-    #     sp.trace = False
-    #     results = sp.current_user_saved_tracks()
-    #     return render(request, 'statify/savedtracks.html', {'tracks': results['items']})
+        return callback(request, auth_token=auth_token['access_token'], refresh_token=auth_token['refresh_token'])
+    else:
+        auth_url = util.prompt_for_user_token(username, scope=SCOPE, client_id=SPOTIPY_CLIENT_ID,
+                                              client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
+        return redirect(auth_url)
 
 
-def callback(request):
-    code = ''
-    try:
-        code = request.GET['code']
-    except:
+def callback(request, auth_token=None, refresh_token=None):
+    """Is either called with a cached token, or is received as a callback from spotify with the credentials"""
+    if auth_token:
         pass
-    return HttpResponse('code: ' + code)
+    else:
+        auth_token = request.GET['code']
+
+    # save auth token and redirect to new page to get API data
+
+    return statshome(request, auth_token)
+
+
+def statshome(request, auth_token):
+    """Shows basic stats for the user"""
+    sp = spotipy.Spotify(auth=auth_token)
+    sp.trace = False
+    results = sp.current_user()
+
+    imageurl = results['images'][0]['url']
+    display_name = results['display_name']
+    spotifyname = results['id']
+    country = results['country']
+    accounturl = results['external_urls']['spotify']
+    product = results['product']
+
+    return render(request, 'statify/statshome.html', {
+        'imageurl': imageurl,
+        'spotifyname': spotifyname,
+        'country': country,
+        'accounturl': accounturl,
+        'product': product,
+        'display_name': display_name
+    })

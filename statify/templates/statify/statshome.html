@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>{{ display_name }}</title>
+    <h2>{{ display_name }}</h2>
+{% endblock head %}
+{% block body %}
+    <div class="row">
+        <div class="col s3">
+            <a href="{{ accounturl }}">
+                <img width="240" src="{{ imageurl }}">
+            </a>
+        </div>
+        <div class="col s3 flow-text">
+            <ul>
+                <li>Username: {{ spotifyname }}</li>
+                <li>Country: {{ country }}</li>
+                <li>Type of user: {{ product }}</li>
+            </ul>
+        </div>
+    </div>
+{% endblock body %}

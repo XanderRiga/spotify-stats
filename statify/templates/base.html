@@ -6,15 +6,12 @@
 <!DOCTYPE html>
 <head>
     <div class="container">
+    <h1>
+        <a href="{% url 'statify:login_user' %}">Statify</a>
+        <i class="material-icons medium">queue_music</i>
+    </h1>
+    <br><br>
     {% block head %}{% endblock head %}
-    {% block navbar %}
-        <nav class="nav-wrapper">
-            <a href="#" class="brand-logo right">Logo</a>
-              <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li><a href="{% url 'statify:profile' %}">Profile</a></li>
-              </ul>
-        </nav>
-    {% endblock navbar %}
     </div>
 </head>
 <body>
