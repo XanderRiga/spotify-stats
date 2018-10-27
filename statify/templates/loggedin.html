@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+<nav>
+    <div class="nav-wrapper light-blue darken-1">
+        <a href="#" class="brand-logo right">Logo</a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <li><a href="{% url 'statify:profile' %}">Profile</a></li>
+            <li><a href="{% url 'statify:spotifyauth' %}">Spotify</a></li>
+            <li><a href="{% url 'statify:logout_user' %}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+{% endblock navbar %}

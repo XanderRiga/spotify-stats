@@ -7,10 +7,10 @@
 <head>
     <div class="container">
     <h1>
-        <a href="{% url 'statify:login_user' %}">Statify</a>
+        <a href="{% url 'statify:login_user' %}" style="color: black !important">Statify</a>
         <i class="material-icons medium">queue_music</i>
     </h1>
-    <br><br>
+    {% block navbar %}{% endblock navbar %}
     {% block head %}{% endblock head %}
     </div>
 </head>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'loggedin.html' %}
 
 {% block head %}
     <title>User Profile</title>
@@ -9,11 +9,6 @@
     <h3>Welcome to detail page for user: {{ user.username }}</h3>
     <br>
     <div class="row">
-        <div class="col s6">
-            <button>
-                <a href="{% url 'statify:logout_user' %}">Logout</a>
-            </button>
-        </div>
         <div class="col s6">
             <button>
                 <a href="{% url 'statify:spotifyauth' %}">Sign into Spotify</a>

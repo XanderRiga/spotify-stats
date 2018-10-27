@@ -84,13 +84,18 @@ def callback(request, auth_token=None, refresh_token=None):
     else:
         auth_token = request.GET['code']
 
-    # save auth token and redirect to new page to get API data
+    # TODO save auth token and refresh to user object and redirect to new page to get API data
 
     return statshome(request, auth_token)
 
 
-def statshome(request, auth_token):
+def statshome(request, auth_token=None):
     """Shows basic stats for the user"""
+    if not auth_token:
+        # TODO need to get token saved from user or refresh if necessary for faster loading
+        # TODO so we don't have to go through spotifyauth every time
+        pass
+
     sp = spotipy.Spotify(auth=auth_token)
     sp.trace = False
     results = sp.current_user()
